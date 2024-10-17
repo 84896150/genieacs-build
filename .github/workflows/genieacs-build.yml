@@ -35,9 +35,7 @@ jobs:
           cd genieacs && npm install && npm run build
           tar -czvf dist.tar.gz dist
           mkdir -p /opt/images
-          ls -l
-          pwd
-          sudo mv -f /home/runner/work/genieacs-build/genieacs-build/dist.tar.gz /opt/images/
+          sudo mv -f /home/runner/work/genieacs-build/genieacs-build/genieacs/dist.tar.gz /opt/images/
       - name : Upload packages
         uses: actions/upload-artifact@master
         if: always()
