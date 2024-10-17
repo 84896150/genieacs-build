@@ -1,0 +1,45 @@
+name: Build GenieACS
+
+on: 
+  release:
+    types: [published]
+  push:
+    tags:
+    - 'v*'
+  #  branches: 
+  #    - master
+#  schedule:
+#    - cron: 0 8 * * 5
+  watch:
+    types: [started]
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+          
+      - run: |
+          # https://github.com/actions/setup-go/issues/107
+          git clone --depth=1 https://gitee.com/xiongchao/genieacs.git
+      - name: npm install, build and test
+        run: |
+          cd genieacs && npm install && npm run build
+          tar -czvf dist.tar.gz dist
+          mkdir -p /opt/images
+          sudo mv -f /home/runner/work/genieacs-build/genieacs-build/dist.tar.gz /opt/images/
+      - name : Upload packages
+        uses: actions/upload-artifact@master
+        if: always()
+        with:
+          name: genieacs-packages
+          path: /opt/images/
+      
